@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 
-import type { FormData as MainFormData } from "../evaluation-form";
+import type { FormData as MainFormData } from "@/lib/form-types";
 
 // Use the same FormData type from the main form
 type FormData = MainFormData;

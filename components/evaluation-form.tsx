@@ -9,124 +9,15 @@ import { ProfessionalSkillsPage } from "./professional-skills"
 import { CompanyCompetenciesPage } from "./company-competencies"
 import { SpecificCompetenciesPage } from "./specific-competencies"
 import { SubmissionPage } from "./submission"
-
-// Define the CompetencyLevel type
-type CompetencyLevel = "NA" | "DEBUTANT" | "AUTONOME" | "AUTONOME_PLUS"
-
-// Define the specific competency type
-type SpecificCompetency = {
-  name: string;
-  level: CompetencyLevel | "";
-}
-
-export type FormData = {
-  // Personal Info
-  stagiaireCIN: string;
-  studentName: string;  // Will store the full name when API returns it
-  companyName: string;
-  tuteurCIN: string;
-  tutorName: string;  // Will store the full name when API returns it
-  startDate: string;
-  endDate: string;
-  projectTheme: string;
-  objectives: string;
-  
-  // Global Assessment
-  globalAssessment: {
-    involvement: number;
-    openness: number;
-    productionQuality: number;
-    observations: string;
-  };
-  
-  // Individual Competencies
-  individualCompetencies: {
-    analysis: CompetencyLevel;
-    methods: CompetencyLevel;
-    stakeholders: CompetencyLevel;
-    international: CompetencyLevel;
-    selfEvaluation: CompetencyLevel;
-    complexProblems: CompetencyLevel;
-    grade: string;
-  };
-  
-  // Company Competencies
-  companyCompetencies: {
-    company?: {
-      companyAnalysis: CompetencyLevel;
-      projectApproach: CompetencyLevel;
-      environmentalPolicy: CompetencyLevel;
-      informationResearch: CompetencyLevel;
-    };
-    technical?: {
-      preliminaryDesign: CompetencyLevel;
-    };
-    companyGrade: string;
-    technicalGrade: string;
-  };
-  
-  // Specific Competencies
-  specificCompetencies: SpecificCompetency[];
-  
-  // General Assessment
-  generalAssessment: {
-    strengths: string;
-    areasForImprovement: string;
-    overallComment: string;
-    overallRating: number;
-  };
-}
-
-const initialFormData: FormData = {
-  stagiaireCIN: "",
-  studentName: "",
-  companyName: "",
-  tuteurCIN: "",
-  tutorName: "",
-  startDate: "",
-  endDate: "",
-  projectTheme: "",
-  objectives: "",
-  globalAssessment: {
-    involvement: 0,
-    openness: 0,
-    productionQuality: 0,
-    observations: "",
-  },
-  individualCompetencies: {
-    analysis: "NA",
-    methods: "NA",
-    stakeholders: "NA",
-    international: "NA",
-    selfEvaluation: "NA",
-    complexProblems: "NA",
-    grade: "",
-  },
-  companyCompetencies: {
-    company: {
-      companyAnalysis: "NA",
-      projectApproach: "NA",
-      environmentalPolicy: "NA",
-      informationResearch: "NA",
-    },
-    technical: {
-      preliminaryDesign: "NA",
-    },
-    companyGrade: "",
-    technicalGrade: "",
-  },
-  specificCompetencies: Array(5).fill({ name: "", level: "DEBUTANT" }),
-  generalAssessment: {
-    strengths: "",
-    areasForImprovement: "",
-    overallComment: "",
-    overallRating: 0,
-  },
-}
+import { toast } from "@/hooks/use-toast"
+// TODO: Import submitEvaluation from the correct path once api-service is created
+import { submitEvaluation } from "@/hooks/handleSubmitForm"
+import { FormData, initialFormData } from "@/lib/form-types"
 
 export function EvaluationForm() {
   const [currentPage, setCurrentPage] = useState(0)
   const [formData, setFormData] = useState<FormData>(initialFormData)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const pages = [
     <PersonalInfoPage key="personal" formData={formData} setFormData={setFormData} />,
@@ -139,8 +30,28 @@ export function EvaluationForm() {
 
   const handleNext = () => {
     if (currentPage < pages.length - 1) {
-      setCurrentPage(currentPage + 1)
-      window.scrollTo(0, 0)
+      // Validate current page before moving to next
+      let isValid = true;
+      
+      // Add validation logic for each page
+      if (currentPage === 0) {
+        // Personal info validation
+        if (!formData.stagiaireCIN || !formData.tuteurCIN || !formData.companyName || 
+            !formData.startDate || !formData.endDate) {
+          toast({
+            title: "Information manquante",
+            description: "Veuillez remplir tous les champs obligatoires.",
+            variant: "destructive"
+          });
+          isValid = false;
+        }
+      }
+      
+      // Only proceed if validation passes
+      if (isValid) {
+        setCurrentPage(currentPage + 1)
+        window.scrollTo(0, 0)
+      }
     }
   }
 
@@ -151,10 +62,44 @@ export function EvaluationForm() {
     }
   }
 
-  const handleSubmit = () => {
-    console.log("Form submitted:", formData)
-    // Here you would typically send the data to your backend
-    alert("Évaluation soumise avec succès!")
+  const handleSubmit = async () => {
+    // Validate before submission
+    if (!formData.stagiaireCIN || !formData.tuteurCIN) {
+      toast({
+        title: "Information manquante",
+        description: "Les informations du stagiaire et du tuteur sont obligatoires.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Start submission process
+    setIsSubmitting(true);
+    try {
+      // Call the API transaction function
+      await submitEvaluation(formData);
+      
+      // Show success message
+      toast({
+        title: "Évaluation soumise",
+        description: "L'évaluation a été soumise avec succès.",
+      });
+      
+      // Reset form or redirect
+      // setFormData(initialFormData); // Uncomment to reset form
+      // window.location.href = "/evaluations"; // Uncomment to redirect
+      
+    } catch (error) {
+      // Show error message
+      console.error("Submission error:", error);
+      toast({
+        title: "Erreur de soumission",
+        description: error instanceof Error ? error.message : "Une erreur est survenue lors de la soumission.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -183,7 +128,7 @@ export function EvaluationForm() {
             <Button 
               variant="outline" 
               onClick={handlePrevious} 
-              disabled={currentPage === 0}
+              disabled={currentPage === 0 || isSubmitting}
               className="border-accent hover:bg-accent hover:text-accent-foreground"
             >
               Précédent
@@ -192,9 +137,10 @@ export function EvaluationForm() {
             {currentPage === pages.length - 1 ? (
               <Button 
                 onClick={handleSubmit}
+                disabled={isSubmitting}
                 className="bg-accent text-accent-foreground hover:bg-accent/90"
               >
-                Soumettre
+                {isSubmitting ? "Soumission en cours..." : "Soumettre"}
               </Button>
             ) : (
               <Button 

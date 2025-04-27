@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle, XCircle, Loader2 } from "lucide-react"
-import type { FormData } from "../evaluation-form"
+import type { FormData } from "@/lib/form-types"
 import { 
   checkStagiaireExists, 
   checkTuteurExists, 
