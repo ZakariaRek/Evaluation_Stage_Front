@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { Moon, Sun } from "lucide-react"
 
 import {
   NavigationMenu,
@@ -13,38 +14,58 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { useTheme } from "next-themes"
 
 export function NavBar() {
+  const { setTheme, theme } = useTheme()
+
   return (
-    <div className="border-b">
-      <div className="container flex h-16 items-center justify-center">
-        <NavigationMenu className="mx-auto">
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Evaluation</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[200px] gap-3 p-4">
-                  <ListItem href="/evaluations" title="Liste de evaluation">
-                    Voir toutes les évaluations
-                  </ListItem>
-                  <ListItem href="/evaluations/add" title="Add evaluation">
-                    Ajouter une nouvelle évaluation
-                  </ListItem>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/stagiaires" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>List Stagiaire</NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/tuteurs" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>List Tuteur</NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
+    <div className="border-b bg-card">
+      <div className="container flex h-16 items-center justify-between px-4">
+        <div className="flex items-center">
+          <Link href="/" className="mr-6 flex items-center gap-2">
+            <span className="text-lg font-bold text-primary">Evaluation Stage</span>
+          </Link>
+          
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="bg-transparent">Evaluation</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[200px] gap-3 p-4 bg-popover">
+                    <ListItem href="/evaluations" title="Liste de evaluation">
+                      Voir toutes les évaluations
+                    </ListItem>
+                    <ListItem href="/evaluations/add" title="Add evaluation">
+                      Ajouter une nouvelle évaluation
+                    </ListItem>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/stagiaires" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>List Stagiaire</NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/tuteurs" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>List Tuteur</NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
+        
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Toggle Theme"
+          className="mr-2"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        >
+          {theme === "dark" ? <Sun className="h-[1.5rem] w-[1.5rem]" /> : <Moon className="h-[1.5rem] w-[1.5rem]" />}
+        </Button>
       </div>
     </div>
   )

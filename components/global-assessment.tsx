@@ -2,10 +2,18 @@
 
 import type React from "react"
 import type { Dispatch, SetStateAction } from "react"
-import type { FormData } from "../evaluation-form"
+interface FormData {
+  globalAssessment: {
+    involvement: number;
+    openness: number;
+    productionQuality: number;
+    observations: string;
+  };
+}
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface GlobalAssessmentPageProps {
   formData: FormData
@@ -14,7 +22,7 @@ interface GlobalAssessmentPageProps {
 
 export function GlobalAssessmentPage({ formData, setFormData }: GlobalAssessmentPageProps) {
   const handleChange = (name: string, value: number) => {
-    setFormData((prev) => ({
+    setFormData((prev: FormData) => ({
       ...prev,
       globalAssessment: {
         ...prev.globalAssessment,
@@ -25,7 +33,7 @@ export function GlobalAssessmentPage({ formData, setFormData }: GlobalAssessment
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setFormData((prev) => ({
+    setFormData((prev: FormData) => ({
       ...prev,
       globalAssessment: {
         ...prev.globalAssessment,
@@ -36,12 +44,14 @@ export function GlobalAssessmentPage({ formData, setFormData }: GlobalAssessment
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-center">APPRECIATIONS GLOBALES SUR L'ETUDIANT(E)</h2>
+      <h2 className="text-2xl font-bold text-center text-primary">APPRECIATIONS GLOBALES SUR L'ETUDIANT(E)</h2>
 
-      <div className="space-y-8">
-        <div className="space-y-6">
-          <div className="space-y-4">
-            <Label className="font-medium">IMPLICATION DANS SES ACTIVITES</Label>
+      <div className="space-y-6">
+        <Card className="border-accent">
+          <CardHeader className="bg-accent/10">
+            <CardTitle className="text-lg text-accent-foreground">IMPLICATION DANS SES ACTIVITES</CardTitle>
+          </CardHeader>
+          <CardContent>
             <RadioGroup
               className="grid grid-cols-5 gap-2"
               value={formData.globalAssessment.involvement.toString()}
@@ -78,10 +88,14 @@ export function GlobalAssessmentPage({ formData, setFormData }: GlobalAssessment
                 </Label>
               </div>
             </RadioGroup>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="space-y-4">
-            <Label className="font-medium">OUVERTURE AUX AUTRES</Label>
+        <Card className="border-accent">
+          <CardHeader className="bg-accent/10">
+            <CardTitle className="text-lg text-accent-foreground">OUVERTURE AUX AUTRES</CardTitle>
+          </CardHeader>
+          <CardContent>
             <RadioGroup
               className="grid grid-cols-5 gap-2"
               value={formData.globalAssessment.openness.toString()}
@@ -118,10 +132,14 @@ export function GlobalAssessmentPage({ formData, setFormData }: GlobalAssessment
                 </Label>
               </div>
             </RadioGroup>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="space-y-4">
-            <Label className="font-medium">QUALITE DE SES "PRODUCTIONS"</Label>
+        <Card className="border-accent">
+          <CardHeader className="bg-accent/10">
+            <CardTitle className="text-lg text-accent-foreground">QUALITE DE SES "PRODUCTIONS"</CardTitle>
+          </CardHeader>
+          <CardContent>
             <RadioGroup
               className="grid grid-cols-5 gap-2"
               value={formData.globalAssessment.productionQuality.toString()}
@@ -158,19 +176,24 @@ export function GlobalAssessmentPage({ formData, setFormData }: GlobalAssessment
                 </Label>
               </div>
             </RadioGroup>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        <div className="space-y-2">
-          <Label htmlFor="observations">OBSERVATIONS SUR L'ENSEMBLE DU TRAVAIL ACCOMPLI</Label>
-          <Textarea
-            id="observations"
-            name="observations"
-            value={formData.globalAssessment.observations}
-            onChange={handleTextChange}
-            rows={4}
-          />
-        </div>
+        <Card className="border-accent">
+          <CardHeader className="bg-accent/10">
+            <CardTitle className="text-lg text-accent-foreground">OBSERVATIONS SUR L'ENSEMBLE DU TRAVAIL ACCOMPLI</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Textarea
+              id="observations"
+              name="observations"
+              value={formData.globalAssessment.observations}
+              onChange={handleTextChange}
+              rows={4}
+              className="w-full border-accent/50 focus-visible:ring-accent"
+            />
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

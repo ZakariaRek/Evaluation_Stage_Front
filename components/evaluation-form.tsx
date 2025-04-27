@@ -6,60 +6,82 @@ import { Card, CardContent } from "@/components/ui/card"
 import { PersonalInfoPage } from "./personal-info"
 import { GlobalAssessmentPage } from "./global-assessment"
 import { ProfessionalSkillsPage } from "./professional-skills"
-import { CommunicationSkillsPage } from "./communication-skills"
-import { GeneralAssessmentPage } from "./general-assessment"
+import { CompanyCompetenciesPage } from "./company-competencies"
+import { SpecificCompetenciesPage } from "./specific-competencies"
 import { SubmissionPage } from "./submission"
 
 // Define the CompetencyLevel type
 type CompetencyLevel = "NA" | "DEBUTANT" | "AUTONOME" | "AUTONOME_PLUS"
 
+// Define the specific competency type
+type SpecificCompetency = {
+  name: string;
+  level: CompetencyLevel | "";
+}
+
 export type FormData = {
-  studentName: string
-  companyName: string
-  tutorName: string
-  startDate: string
-  endDate: string
-  projectTheme: string
-  objectives: string
+  // Personal Info
+  stagiaireCIN: string;
+  studentName: string;  // Will store the full name when API returns it
+  companyName: string;
+  tuteurCIN: string;
+  tutorName: string;  // Will store the full name when API returns it
+  startDate: string;
+  endDate: string;
+  projectTheme: string;
+  objectives: string;
+  
+  // Global Assessment
   globalAssessment: {
-    involvement: number
-    openness: number
-    productionQuality: number
-    observations: string
-  }
+    involvement: number;
+    openness: number;
+    productionQuality: number;
+    observations: string;
+  };
+  
+  // Individual Competencies
   individualCompetencies: {
-    analysis: CompetencyLevel
-    methods: CompetencyLevel
-    stakeholders: CompetencyLevel
-    international: CompetencyLevel
-    selfEvaluation: CompetencyLevel
-    complexProblems: CompetencyLevel
-    grade: string
-  }
-  professionalSkills: {
-    technicalKnowledge: number
-    problemSolving: number
-    adaptability: number
-    initiative: number
-    workQuality: number
-  }
-  communicationSkills: {
-    teamwork: number
-    communication: number
-    punctuality: number
-    professionalism: number
-  }
+    analysis: CompetencyLevel;
+    methods: CompetencyLevel;
+    stakeholders: CompetencyLevel;
+    international: CompetencyLevel;
+    selfEvaluation: CompetencyLevel;
+    complexProblems: CompetencyLevel;
+    grade: string;
+  };
+  
+  // Company Competencies
+  companyCompetencies: {
+    company?: {
+      companyAnalysis: CompetencyLevel;
+      projectApproach: CompetencyLevel;
+      environmentalPolicy: CompetencyLevel;
+      informationResearch: CompetencyLevel;
+    };
+    technical?: {
+      preliminaryDesign: CompetencyLevel;
+    };
+    companyGrade: string;
+    technicalGrade: string;
+  };
+  
+  // Specific Competencies
+  specificCompetencies: SpecificCompetency[];
+  
+  // General Assessment
   generalAssessment: {
-    strengths: string
-    areasForImprovement: string
-    overallComment: string
-    overallRating: number
-  }
+    strengths: string;
+    areasForImprovement: string;
+    overallComment: string;
+    overallRating: number;
+  };
 }
 
 const initialFormData: FormData = {
+  stagiaireCIN: "",
   studentName: "",
   companyName: "",
+  tuteurCIN: "",
   tutorName: "",
   startDate: "",
   endDate: "",
@@ -80,19 +102,20 @@ const initialFormData: FormData = {
     complexProblems: "NA",
     grade: "",
   },
-  professionalSkills: {
-    technicalKnowledge: 0,
-    problemSolving: 0,
-    adaptability: 0,
-    initiative: 0,
-    workQuality: 0,
+  companyCompetencies: {
+    company: {
+      companyAnalysis: "NA",
+      projectApproach: "NA",
+      environmentalPolicy: "NA",
+      informationResearch: "NA",
+    },
+    technical: {
+      preliminaryDesign: "NA",
+    },
+    companyGrade: "",
+    technicalGrade: "",
   },
-  communicationSkills: {
-    teamwork: 0,
-    communication: 0,
-    punctuality: 0,
-    professionalism: 0,
-  },
+  specificCompetencies: Array(5).fill({ name: "", level: "DEBUTANT" }),
   generalAssessment: {
     strengths: "",
     areasForImprovement: "",
@@ -109,8 +132,8 @@ export function EvaluationForm() {
     <PersonalInfoPage key="personal" formData={formData} setFormData={setFormData} />,
     <GlobalAssessmentPage key="global" formData={formData} setFormData={setFormData} />,
     <ProfessionalSkillsPage key="professional" formData={formData} setFormData={setFormData} />,
-    <CommunicationSkillsPage key="communication" formData={formData} setFormData={setFormData} />,
-    <GeneralAssessmentPage key="general" formData={formData} setFormData={setFormData} />,
+    <CompanyCompetenciesPage key="company" formData={formData} setFormData={setFormData} />,
+    <SpecificCompetenciesPage key="specific" formData={formData} setFormData={setFormData} />,
     <SubmissionPage key="submission" formData={formData} />,
   ]
 
@@ -136,18 +159,20 @@ export function EvaluationForm() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <Card>
+      <Card className="border-accent shadow-lg">
         <CardContent className="pt-6">
           <div className="mb-6">
             <div className="flex justify-between mb-2">
               {Array.from({ length: pages.length }).map((_, index) => (
                 <div
                   key={index}
-                  className={`h-2 flex-1 mx-1 rounded-full ${index <= currentPage ? "bg-primary" : "bg-muted"}`}
+                  className={`h-2 flex-1 mx-1 rounded-full ${
+                    index <= currentPage ? "bg-accent" : "bg-muted"
+                  }`}
                 />
               ))}
             </div>
-            <p className="text-center text-sm text-muted-foreground">
+            <p className="text-center text-sm text-accent-foreground font-medium">
               Étape {currentPage + 1} sur {pages.length}
             </p>
           </div>
@@ -155,14 +180,29 @@ export function EvaluationForm() {
           {pages[currentPage]}
 
           <div className="flex justify-between mt-8">
-            <Button variant="outline" onClick={handlePrevious} disabled={currentPage === 0}>
+            <Button 
+              variant="outline" 
+              onClick={handlePrevious} 
+              disabled={currentPage === 0}
+              className="border-accent hover:bg-accent hover:text-accent-foreground"
+            >
               Précédent
             </Button>
 
             {currentPage === pages.length - 1 ? (
-              <Button onClick={handleSubmit}>Soumettre</Button>
+              <Button 
+                onClick={handleSubmit}
+                className="bg-accent text-accent-foreground hover:bg-accent/90"
+              >
+                Soumettre
+              </Button>
             ) : (
-              <Button onClick={handleNext}>Suivant</Button>
+              <Button 
+                onClick={handleNext}
+                className="bg-accent text-accent-foreground hover:bg-accent/90"
+              >
+                Suivant
+              </Button>
             )}
           </div>
         </CardContent>
