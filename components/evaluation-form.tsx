@@ -1,3 +1,4 @@
+// Full implementation of the EvaluationForm component with the updated handleSubmit function
 "use client"
 
 import { useState } from "react"
@@ -79,15 +80,16 @@ export function EvaluationForm() {
       // Call the API transaction function
       await submitEvaluation(formData);
       
-      // Show success message
+      // Show success message with toast
       toast({
         title: "Évaluation soumise",
         description: "L'évaluation a été soumise avec succès.",
       });
       
-      // Reset form or redirect
-      // setFormData(initialFormData); // Uncomment to reset form
-      // window.location.href = "/evaluations"; // Uncomment to redirect
+      // Reset form and redirect to first page
+      setFormData(initialFormData);
+      setCurrentPage(0);
+      window.scrollTo(0, 0);
       
     } catch (error) {
       // Show error message

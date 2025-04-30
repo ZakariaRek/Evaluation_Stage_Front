@@ -44,14 +44,36 @@ export function NavBar() {
                 </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/stagiaires" legacyBehavior passHref>
+                {/* <Link href="/stagiaires" legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>List Stagiaire</NavigationMenuLink>
-                </Link>
+                </Link> */}
+                <NavigationMenuTrigger className="bg-transparent">Stagiaire</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[200px] gap-3 p-4 bg-popover">
+                    <ListItem href="/stagiaires" title="Liste de Stagiaire">
+                      Voir toutes les Stagiaires
+                    </ListItem>
+                    <ListItem href="/stagiaires/add" title="Add Stagiaire">
+                      Ajouter un nouveau Stagiaire
+                    </ListItem>
+                  </ul>
+                </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/tuteurs" legacyBehavior passHref>
+                {/* <Link href="/tuteurs" legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>List Tuteur</NavigationMenuLink>
-                </Link>
+                </Link> */}
+                <NavigationMenuTrigger className="bg-transparent">Tuteur</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[200px] gap-3 p-4 bg-popover">
+                    <ListItem href="/tuteurs" title="Liste de Stagiaire">
+                      Voir toutes les Tuteurs
+                    </ListItem>
+                    <ListItem href="/tuteurs/add" title="Add Stagiaire">
+                      Ajouter un nouveau Tuteur
+                    </ListItem>
+                  </ul>
+                </NavigationMenuContent>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
