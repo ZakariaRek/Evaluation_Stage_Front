@@ -83,7 +83,7 @@ export function CompanyCompetenciesPage({ formData, setFormData }: CompanyCompet
                       value={formData.companyCompetencies?.company?.companyAnalysis || ""}
                       onValueChange={(value) => handleCompetencyChange("company", "companyAnalysis", value)}
                     >
-                      <RadioGroupItem value="NA" id="company-analysis-na" />
+                      <RadioGroupItem  value="NA" id="company-analysis-na" />
                     </RadioGroup>
                   </td>
                   <td className="text-center">

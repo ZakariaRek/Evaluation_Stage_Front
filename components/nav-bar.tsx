@@ -66,10 +66,10 @@ export function NavBar() {
                 <NavigationMenuTrigger className="bg-transparent">Tuteur</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[200px] gap-3 p-4 bg-popover">
-                    <ListItem href="/tuteurs" title="Liste de Stagiaire">
+                    <ListItem href="/tuteurs" title="Liste de Tuteur">
                       Voir toutes les Tuteurs
                     </ListItem>
-                    <ListItem href="/tuteurs/add" title="Add Stagiaire">
+                    <ListItem href="/tuteurs/add" title="Add Tuteur">
                       Ajouter un nouveau Tuteur
                     </ListItem>
                   </ul>
